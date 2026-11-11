@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fieldnote"
+version = "0.1.0"
+description = "Multimodal RAG assistant for HVAC field technicians"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    # Models and embeddings (install the CUDA build of torch first, see README)
+    "torch>=2.4",
+    "torchvision>=0.19",
+    "transformers>=4.45",          # SigLIP, rerankers
+    "sentence-transformers>=3.0",  # bge embeddings and cross-encoder reranker
+    "faster-whisper>=1.0",         # audio transcription (ingest only)
+
+    # Documents and images
+    "pymupdf>=1.24",               # PDF to page images and text
+    "pillow>=10.0",
+    "numpy>=1.26",
+
+    # Vector database
+    "qdrant-client>=1.10",
+
+    # Answer synthesis
+    "anthropic>=0.40",
+
+    # API and UI
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "gradio>=4.0",
+
+    # Config, data and utilities
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "pandas>=2.0",
+    "requests>=2.31",              # download_manuals.py
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+    "jupyterlab>=4.0",
+]
+# Install later, only once the baseline is scored: pip install -e ".[eval]"
+eval = [
+    "deepeval",                    # pin the exact version you install
+]
+# Optional upgrade for manual pages: pip install -e ".[colpali]"
+colpali = [
+    "colpali-engine",
+    "bitsandbytes",
+    "accelerate",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "baseline", "eval", "scripts"]
